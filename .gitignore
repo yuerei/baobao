@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+jspm_packages/
+web_modules/
+
+# Secrets and Environment Variables (NEVER commit your Discord token!)
+.env
+.env.local
+.env.*.local
+config.json
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build and Output (If using TypeScript or Bundlers)
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
