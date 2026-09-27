@@ -1,6 +1,7 @@
 import {
   Events,
   MessageFlags,
+  type AutocompleteInteraction,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
   type ModalSubmitInteraction,
@@ -95,9 +96,28 @@ async function handleModal(
   }
 }
 
+/** Handle an autocomplete request by delegating to the command's handler. */
+async function handleAutocomplete(
+  client: BaoBaoClient,
+  interaction: AutocompleteInteraction,
+): Promise<void> {
+  const command = client.commands.get(interaction.commandName);
+  if (!command?.autocomplete) return;
+
+  try {
+    await command.autocomplete(interaction);
+  } catch (error) {
+    log.error(`Autocomplete for /${interaction.commandName} failed:`, error);
+    // Best-effort empty response so the client doesn't hang.
+    if (!interaction.responded) {
+      await interaction.respond([]).catch(() => undefined);
+    }
+  }
+}
+
 /**
- * Central interaction router: dispatches slash commands, button clicks, and
- * modal submissions to their respective handlers.
+ * Central interaction router: dispatches slash commands, autocomplete requests,
+ * button clicks, and modal submissions to their respective handlers.
  */
 export default defineEvent({
   name: Events.InteractionCreate,
@@ -106,6 +126,8 @@ export default defineEvent({
 
     if (interaction.isChatInputCommand()) {
       await handleCommand(client, interaction);
+    } else if (interaction.isAutocomplete()) {
+      await handleAutocomplete(client, interaction);
     } else if (interaction.isButton()) {
       await handleButton(client, interaction);
     } else if (interaction.isModalSubmit()) {

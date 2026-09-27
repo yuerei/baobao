@@ -11,6 +11,7 @@ import { defineCommand } from "../../types/Command.js";
  * an exact-match "confirm" button and a prefix-match "counter:0" button.
  */
 export default defineCommand({
+  category: "Utility",
   data: new SlashCommandBuilder()
     .setName("panel")
     .setDescription("Show a demo panel with interactive buttons."),

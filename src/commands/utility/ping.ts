@@ -5,6 +5,7 @@ import { defineCommand } from "../../types/Command.js";
  * /ping — replies with the bot's websocket and round-trip latency.
  */
 export default defineCommand({
+  category: "Utility",
   data: new SlashCommandBuilder()
     .setName("ping")
     .setDescription("Check the bot's latency."),

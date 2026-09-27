@@ -1,4 +1,5 @@
 import type {
+  AutocompleteInteraction,
   ChatInputCommandInteraction,
   SlashCommandBuilder,
   SlashCommandOptionsOnlyBuilder,
@@ -21,8 +22,18 @@ export type SlashCommandData =
 export interface Command {
   /** The slash command definition, built with SlashCommandBuilder. */
   data: SlashCommandData;
+  /**
+   * Optional grouping label used by `/help` to organize commands.
+   * Defaults to "General" when omitted.
+   */
+  category?: string;
   /** The handler invoked when the command is used. */
   execute: (interaction: ChatInputCommandInteraction) => void | Promise<void>;
+  /**
+   * Optional autocomplete handler, invoked when a user is typing an option
+   * marked with `.setAutocomplete(true)`. Respond via `interaction.respond()`.
+   */
+  autocomplete?: (interaction: AutocompleteInteraction) => void | Promise<void>;
 }
 
 /**

@@ -12,6 +12,7 @@ import { defineCommand } from "../../types/Command.js";
  * modal handler by matching customIds.
  */
 export default defineCommand({
+  category: "Utility",
   data: new SlashCommandBuilder()
     .setName("feedback")
     .setDescription("Open a form to send feedback."),

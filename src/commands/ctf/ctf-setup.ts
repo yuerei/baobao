@@ -18,6 +18,7 @@ import { defineCommand } from "../../types/Command.js";
  * across bot restarts.
  */
 export default defineCommand({
+  category: "CTF",
   data: new SlashCommandBuilder()
     .setName("ctf-setup")
     .setDescription("Post a permanent panel for creating CTF channels.")

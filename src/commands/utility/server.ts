@@ -5,6 +5,7 @@ import { defineCommand } from "../../types/Command.js";
  * /server — shows basic information about the current guild.
  */
 export default defineCommand({
+  category: "Utility",
   data: new SlashCommandBuilder()
     .setName("server")
     .setDescription("Show information about this server."),
