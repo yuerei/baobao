@@ -1,6 +1,6 @@
 {
   "name": "baobao",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A TypeScript Discord.js bot",
   "main": "src/BaoBao.ts",
   "scripts": {
@@ -10,6 +10,8 @@
     "dev": "tsx watch src/BaoBao.ts",
     "deploy": "tsx src/deploy-commands.ts",
     "deploy:built": "node dist/deploy-commands.js",
+    "clear": "tsx src/clear-commands.ts",
+    "clear:built": "node dist/clear-commands.js",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],

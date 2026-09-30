@@ -47,3 +47,38 @@ export async function deployCommands(
 
   return body.length;
 }
+
+export interface ClearOptions {
+  token: string;
+  clientId: string;
+  /** If provided, clears that guild's commands. Otherwise clears global commands. */
+  guildId?: string;
+}
+
+/**
+ * Remove all registered slash commands by overwriting the command list with
+ * an empty array.
+ *
+ * - Without `guildId`: clears GLOBAL commands (can take up to ~1 hour to
+ *   disappear from clients).
+ * - With `guildId`: clears that guild's commands (effective immediately).
+ */
+export async function clearCommands({
+  token,
+  clientId,
+  guildId,
+}: ClearOptions): Promise<void> {
+  const rest = new REST().setToken(token);
+
+  if (guildId) {
+    log.info(`Clearing all commands for guild ${guildId}...`);
+    await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
+      body: [],
+    });
+    log.info("Guild commands cleared (effective immediately).");
+  } else {
+    log.info("Clearing all GLOBAL commands...");
+    await rest.put(Routes.applicationCommands(clientId), { body: [] });
+    log.info("Global commands cleared (may take up to 1 hour to propagate).");
+  }
+}
