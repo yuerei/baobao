@@ -1,6 +1,8 @@
 import {
   ActionRowBuilder,
+  MessageFlags,
   ModalBuilder,
+  PermissionFlagsBits,
   TextInputBuilder,
   TextInputStyle,
 } from "discord.js";
@@ -14,10 +16,32 @@ import { defineButton } from "../types/Button.js";
 /**
  * Handles the "Create CTF" button on the permanent panel by showing a modal
  * that collects the CTF's details. (Discord allows at most 5 modal inputs.)
+ *
+ * Gated on Manage Channels: the panel is public, but only members who can
+ * manage channels may actually create a CTF channel.
  */
 export default defineButton({
   customId: CTF_CREATE_BUTTON_ID,
   execute: async (interaction) => {
+    if (!interaction.inCachedGuild()) {
+      await interaction.reply({
+        content: "This can only be used inside a server.",
+        flags: MessageFlags.Ephemeral,
+      });
+      return;
+    }
+
+    // Only members who can manage channels may create a CTF.
+    if (
+      !interaction.memberPermissions.has(PermissionFlagsBits.ManageChannels)
+    ) {
+      await interaction.reply({
+        content: "You need the **Manage Channels** permission to create a CTF.",
+        flags: MessageFlags.Ephemeral,
+      });
+      return;
+    }
+
     const name = new TextInputBuilder()
       .setCustomId(CTF_FIELDS.name)
       .setLabel("CTF name")

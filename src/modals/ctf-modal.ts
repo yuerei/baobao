@@ -28,6 +28,19 @@ export default defineModal({
       return;
     }
 
+    // Defense-in-depth: the button gates on Manage Channels before showing the
+    // modal, but re-check here in case permissions changed or the modal was
+    // reused after the button check.
+    if (
+      !interaction.memberPermissions.has(PermissionFlagsBits.ManageChannels)
+    ) {
+      await interaction.reply({
+        content: "You need the **Manage Channels** permission to create a CTF.",
+        flags: MessageFlags.Ephemeral,
+      });
+      return;
+    }
+
     // Work out the category to create the channel in. The panel lives in some
     // channel; we use that channel's parent category (if any).
     const originChannel = interaction.channel;
