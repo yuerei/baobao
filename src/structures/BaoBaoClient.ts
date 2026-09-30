@@ -2,6 +2,7 @@ import { Client, Collection, type ClientOptions } from "discord.js";
 import type { Button } from "../types/Button.js";
 import type { Command } from "../types/Command.js";
 import type { Modal } from "../types/Modal.js";
+import type { SelectMenu } from "../types/SelectMenu.js";
 
 /**
  * Resolve a handler for a customId, trying an exact match first, then the
@@ -46,6 +47,12 @@ export class BaoBaoClient extends Client {
   /** Modal handlers matched by a customId prefix, keyed by that prefix. */
   public readonly modalPrefixes = new Collection<string, Modal>();
 
+  /** Select-menu handlers with an exact-match customId, keyed by that customId. */
+  public readonly selectMenus = new Collection<string, SelectMenu>();
+
+  /** Select-menu handlers matched by a customId prefix, keyed by that prefix. */
+  public readonly selectMenuPrefixes = new Collection<string, SelectMenu>();
+
   constructor(options: ClientOptions) {
     super(options);
   }
@@ -64,5 +71,17 @@ export class BaoBaoClient extends Client {
    */
   public resolveModal(customId: string): Modal | undefined {
     return resolveByCustomId(customId, this.modals, this.modalPrefixes);
+  }
+
+  /**
+   * Resolve the select-menu handler for a given customId, trying an exact
+   * match first, then the longest matching prefix.
+   */
+  public resolveSelectMenu(customId: string): SelectMenu | undefined {
+    return resolveByCustomId(
+      customId,
+      this.selectMenus,
+      this.selectMenuPrefixes,
+    );
   }
 }

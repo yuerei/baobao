@@ -1,6 +1,7 @@
 import {
   Events,
   MessageFlags,
+  type AnySelectMenuInteraction,
   type AutocompleteInteraction,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
@@ -15,7 +16,8 @@ const log = createLogger("interaction");
 type RepliableInteraction =
   | ChatInputCommandInteraction
   | ButtonInteraction
-  | ModalSubmitInteraction;
+  | ModalSubmitInteraction
+  | AnySelectMenuInteraction;
 
 /** Reply with an ephemeral error, whether or not the interaction was already answered. */
 async function replyWithError(
@@ -96,6 +98,28 @@ async function handleModal(
   }
 }
 
+/** Handle a select-menu interaction by resolving its handler via customId/prefix. */
+async function handleSelectMenu(
+  client: BaoBaoClient,
+  interaction: AnySelectMenuInteraction,
+): Promise<void> {
+  const menu = client.resolveSelectMenu(interaction.customId);
+  if (!menu) {
+    log.warn(`Received unhandled select menu: ${interaction.customId}`);
+    return;
+  }
+
+  try {
+    await menu.execute(interaction);
+  } catch (error) {
+    log.error(`Select menu "${interaction.customId}" failed:`, error);
+    await replyWithError(
+      interaction,
+      "There was an error while handling this menu.",
+    );
+  }
+}
+
 /** Handle an autocomplete request by delegating to the command's handler. */
 async function handleAutocomplete(
   client: BaoBaoClient,
@@ -117,7 +141,8 @@ async function handleAutocomplete(
 
 /**
  * Central interaction router: dispatches slash commands, autocomplete requests,
- * button clicks, and modal submissions to their respective handlers.
+ * button clicks, select-menu selections, and modal submissions to their
+ * respective handlers.
  */
 export default defineEvent({
   name: Events.InteractionCreate,
@@ -130,6 +155,8 @@ export default defineEvent({
       await handleAutocomplete(client, interaction);
     } else if (interaction.isButton()) {
       await handleButton(client, interaction);
+    } else if (interaction.isAnySelectMenu()) {
+      await handleSelectMenu(client, interaction);
     } else if (interaction.isModalSubmit()) {
       await handleModal(client, interaction);
     }

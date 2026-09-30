@@ -6,6 +6,7 @@ import { loadButtons } from "./loaders/loadButtons.js";
 import { loadCommands } from "./loaders/loadCommands.js";
 import { loadEvents } from "./loaders/loadEvents.js";
 import { loadModals } from "./loaders/loadModals.js";
+import { loadSelectMenus } from "./loaders/loadSelectMenus.js";
 import { BaoBaoClient } from "./structures/BaoBaoClient.js";
 import { createLogger } from "./utils/logger.js";
 
@@ -74,10 +75,14 @@ async function main(): Promise<void> {
 
   const commandCount = await loadCommands(client, join(__dirname, "commands"));
   const buttonCount = await loadButtons(client, join(__dirname, "buttons"));
+  const selectMenuCount = await loadSelectMenus(
+    client,
+    join(__dirname, "selectMenus"),
+  );
   const modalCount = await loadModals(client, join(__dirname, "modals"));
   const eventCount = await loadEvents(client, join(__dirname, "events"));
   log.info(
-    `Loaded ${commandCount} command(s), ${buttonCount} button(s), ${modalCount} modal(s), and ${eventCount} event(s).`,
+    `Loaded ${commandCount} command(s), ${buttonCount} button(s), ${selectMenuCount} select menu(s), ${modalCount} modal(s), and ${eventCount} event(s).`,
   );
 
   await client.login(token);
