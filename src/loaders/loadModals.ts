@@ -50,12 +50,15 @@ function isModal(value: unknown): value is Modal {
 export async function loadModals(
   client: BaoBaoClient,
   modalsDir: string,
+  bustCache = false,
 ): Promise<number> {
   const files = collectFiles(modalsDir);
   let loaded = 0;
 
   for (const filePath of files) {
-    const imported = await import(pathToFileURL(filePath).href);
+    const url =
+      pathToFileURL(filePath).href + (bustCache ? `?v=${Date.now()}` : "");
+    const imported = await import(url);
     const modal: unknown = imported.default;
 
     if (!isModal(modal)) {

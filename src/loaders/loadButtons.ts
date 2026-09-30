@@ -46,12 +46,15 @@ function isButton(value: unknown): value is Button {
 export async function loadButtons(
   client: BaoBaoClient,
   buttonsDir: string,
+  bustCache = false,
 ): Promise<number> {
   const files = collectFiles(buttonsDir);
   let loaded = 0;
 
   for (const filePath of files) {
-    const imported = await import(pathToFileURL(filePath).href);
+    const url =
+      pathToFileURL(filePath).href + (bustCache ? `?v=${Date.now()}` : "");
+    const imported = await import(url);
     const button: unknown = imported.default;
 
     if (!isButton(button)) {

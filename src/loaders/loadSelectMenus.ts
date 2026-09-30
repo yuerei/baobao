@@ -46,12 +46,15 @@ function isSelectMenu(value: unknown): value is SelectMenu {
 export async function loadSelectMenus(
   client: BaoBaoClient,
   selectMenusDir: string,
+  bustCache = false,
 ): Promise<number> {
   const files = collectFiles(selectMenusDir);
   let loaded = 0;
 
   for (const filePath of files) {
-    const imported = await import(pathToFileURL(filePath).href);
+    const url =
+      pathToFileURL(filePath).href + (bustCache ? `?v=${Date.now()}` : "");
+    const imported = await import(url);
     const menu: unknown = imported.default;
 
     if (!isSelectMenu(menu)) {

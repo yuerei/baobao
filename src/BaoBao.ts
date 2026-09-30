@@ -1,5 +1,3 @@
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import { GatewayIntentBits } from "discord.js";
 import { config } from "dotenv";
 import { loadButtons } from "./loaders/loadButtons.js";
@@ -9,6 +7,7 @@ import { loadModals } from "./loaders/loadModals.js";
 import { loadSelectMenus } from "./loaders/loadSelectMenus.js";
 import { BaoBaoClient } from "./structures/BaoBaoClient.js";
 import { createLogger } from "./utils/logger.js";
+import { DIRS } from "./utils/paths.js";
 
 // Load environment variables from a .env file.
 config();
@@ -22,9 +21,6 @@ if (!token) {
   );
   process.exit(1);
 }
-
-// Resolve __dirname in an ES module context.
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /**
  * Create the Discord client with the intents the bot needs.
@@ -73,14 +69,11 @@ function registerProcessHandlers(): void {
 async function main(): Promise<void> {
   registerProcessHandlers();
 
-  const commandCount = await loadCommands(client, join(__dirname, "commands"));
-  const buttonCount = await loadButtons(client, join(__dirname, "buttons"));
-  const selectMenuCount = await loadSelectMenus(
-    client,
-    join(__dirname, "selectMenus"),
-  );
-  const modalCount = await loadModals(client, join(__dirname, "modals"));
-  const eventCount = await loadEvents(client, join(__dirname, "events"));
+  const commandCount = await loadCommands(client, DIRS.commands);
+  const buttonCount = await loadButtons(client, DIRS.buttons);
+  const selectMenuCount = await loadSelectMenus(client, DIRS.selectMenus);
+  const modalCount = await loadModals(client, DIRS.modals);
+  const eventCount = await loadEvents(client, DIRS.events);
   log.info(
     `Loaded ${commandCount} command(s), ${buttonCount} button(s), ${selectMenuCount} select menu(s), ${modalCount} modal(s), and ${eventCount} event(s).`,
   );

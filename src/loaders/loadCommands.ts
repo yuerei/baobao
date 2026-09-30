@@ -45,12 +45,16 @@ function isCommand(value: unknown): value is Command {
 export async function loadCommands(
   client: BaoBaoClient,
   commandsDir: string,
+  bustCache = false,
 ): Promise<number> {
   const files = collectFiles(commandsDir);
   let loaded = 0;
 
   for (const filePath of files) {
-    const imported = await import(pathToFileURL(filePath).href);
+    // ESM caches imports by URL; a query string forces a fresh module on reload.
+    const url =
+      pathToFileURL(filePath).href + (bustCache ? `?v=${Date.now()}` : "");
+    const imported = await import(url);
     const command: unknown = imported.default;
 
     if (!isCommand(command)) {
