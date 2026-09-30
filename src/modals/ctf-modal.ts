@@ -1,17 +1,11 @@
 import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
   ChannelType,
   EmbedBuilder,
   MessageFlags,
   PermissionFlagsBits,
 } from "discord.js";
-import {
-  CTF_ARCHIVE_PREFIX,
-  CTF_FIELDS,
-  CTF_MODAL_ID,
-} from "../features/ctf/constants.js";
+import { buildArchiveRow } from "../features/ctf/components.js";
+import { CTF_FIELDS, CTF_MODAL_ID } from "../features/ctf/constants.js";
 import { normalizeUrl, toChannelName } from "../features/ctf/helpers.js";
 import { defineModal } from "../types/Modal.js";
 import { createLogger } from "../utils/logger.js";
@@ -118,13 +112,7 @@ export default defineModal({
 
       // Archive button — encodes this channel's id so the handler knows what
       // to move. Uses the prefix router, so it survives restarts.
-      const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-        new ButtonBuilder()
-          .setCustomId(`${CTF_ARCHIVE_PREFIX}${channel.id}`)
-          .setLabel("Archive CTF")
-          .setEmoji("📦")
-          .setStyle(ButtonStyle.Secondary),
-      );
+      const row = buildArchiveRow(channel.id);
 
       const firstMessage = await channel.send({
         embeds: [embed],

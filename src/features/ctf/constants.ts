@@ -10,6 +10,12 @@ export const CTF_MODAL_ID = "ctf:modal";
  */
 export const CTF_ARCHIVE_PREFIX = "ctf:archive:";
 
+/**
+ * Prefix for the per-channel "Unarchive CTF" button. The channel id is
+ * appended, e.g. `ctf:unarchive:123456789012345678`.
+ */
+export const CTF_UNARCHIVE_PREFIX = "ctf:unarchive:";
+
 /** The category channel that archived CTF channels are moved into. */
 export const CTF_ARCHIVE_CATEGORY_ID = "1553726264425193632";
 

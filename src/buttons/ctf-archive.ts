@@ -1,4 +1,5 @@
 import { ChannelType, MessageFlags, PermissionFlagsBits } from "discord.js";
+import { buildUnarchiveRow } from "../features/ctf/components.js";
 import {
   CTF_ARCHIVE_CATEGORY_ID,
   CTF_ARCHIVE_PREFIX,
@@ -104,8 +105,11 @@ export default defineButton({
         { reason: `CTF locked on archive by ${interaction.user.tag}` },
       );
 
-      // Disable the button on the original message so it can't be reused.
-      await interaction.message.edit({ components: [] }).catch(() => undefined);
+      // Swap the Archive button for an Unarchive button on the original
+      // message, so the CTF can be restored later.
+      await interaction.message
+        .edit({ components: [buildUnarchiveRow(channel.id)] })
+        .catch(() => undefined);
 
       await interaction.editReply({
         content: `📦 Archived and 🔒 locked ${channel} in **${archiveCategory.name}** (now read-only).`,
