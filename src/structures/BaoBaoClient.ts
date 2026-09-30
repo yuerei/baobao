@@ -3,6 +3,7 @@ import type { Button } from "../types/Button.js";
 import type { Command } from "../types/Command.js";
 import type { Modal } from "../types/Modal.js";
 import type { SelectMenu } from "../types/SelectMenu.js";
+import { CooldownManager } from "../utils/cooldowns.js";
 
 /**
  * Resolve a handler for a customId, trying an exact match first, then the
@@ -52,6 +53,9 @@ export class BaoBaoClient extends Client {
 
   /** Select-menu handlers matched by a customId prefix, keyed by that prefix. */
   public readonly selectMenuPrefixes = new Collection<string, SelectMenu>();
+
+  /** Tracks per-user command cooldowns. */
+  public readonly cooldowns = new CooldownManager();
 
   constructor(options: ClientOptions) {
     super(options);

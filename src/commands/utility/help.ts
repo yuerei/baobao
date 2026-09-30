@@ -72,6 +72,17 @@ function buildDetail(command: Command): EmbedBuilder {
       inline: true,
     });
 
+  if (command.cooldown && command.cooldown > 0) {
+    embed.addFields({
+      name: "Cooldown",
+      value: `${command.cooldown}s`,
+      inline: true,
+    });
+  }
+  if (command.ownerOnly) {
+    embed.addFields({ name: "Access", value: "Owner only", inline: true });
+  }
+
   const options = (json.options ?? []) as APIApplicationCommandOption[];
   if (options.length > 0) {
     embed.addFields({

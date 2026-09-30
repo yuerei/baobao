@@ -27,6 +27,16 @@ export interface Command {
    * Defaults to "General" when omitted.
    */
   category?: string;
+  /**
+   * Optional per-user cooldown in seconds. After a user runs the command, they
+   * must wait this long before running it again. Omit or set to 0 for none.
+   */
+  cooldown?: number;
+  /**
+   * When true, only users whose id is in the OWNER_IDS env var may run the
+   * command. Others get an ephemeral refusal.
+   */
+  ownerOnly?: boolean;
   /** The handler invoked when the command is used. */
   execute: (interaction: ChatInputCommandInteraction) => void | Promise<void>;
   /**

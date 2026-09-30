@@ -10,6 +10,7 @@ import {
 import type { BaoBaoClient } from "../structures/BaoBaoClient.js";
 import { defineEvent } from "../types/Event.js";
 import { createLogger } from "../utils/logger.js";
+import { isOwner } from "../utils/owners.js";
 
 const log = createLogger("interaction");
 
@@ -43,10 +44,38 @@ async function handleCommand(
     return;
   }
 
+  // Owner-only gate (authorization) — checked before the cooldown so a blocked
+  // user isn't charged a cooldown.
+  if (command.ownerOnly && !isOwner(interaction.user.id)) {
+    await replyWithError(
+      interaction,
+      "This command is restricted to the bot owner(s).",
+    );
+    return;
+  }
+
+  // Per-user cooldown (rate limit).
+  if (command.cooldown && command.cooldown > 0) {
+    const remaining = client.cooldowns.check(
+      interaction.commandName,
+      interaction.user.id,
+      command.cooldown,
+    );
+    if (remaining !== null) {
+      await replyWithError(
+        interaction,
+        `⏳ Please wait **${remaining}s** before using \`/${interaction.commandName}\` again.`,
+      );
+      return;
+    }
+  }
+
   try {
     await command.execute(interaction);
   } catch (error) {
     log.error(`Command /${interaction.commandName} failed:`, error);
+    // Don't penalize the user with a cooldown for a command that errored.
+    client.cooldowns.clear(interaction.commandName, interaction.user.id);
     await replyWithError(
       interaction,
       "There was an error while executing this command.",

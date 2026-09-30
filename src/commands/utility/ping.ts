@@ -6,6 +6,7 @@ import { defineCommand } from "../../types/Command.js";
  */
 export default defineCommand({
   category: "Utility",
+  cooldown: 5, // seconds per user
   data: new SlashCommandBuilder()
     .setName("ping")
     .setDescription("Check the bot's latency."),
